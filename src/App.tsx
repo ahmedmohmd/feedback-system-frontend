@@ -1,7 +1,10 @@
+import HeadingCard from "./components/widgets/HeadingCard";
+
 function App() {
   return (
-    <div className="App">
+    <div className="bg-[#f7f8fd] min-h-screen min-screen">
       <h1>App Component</h1>
+      <HeadingCard />
     </div>
   );
 }
