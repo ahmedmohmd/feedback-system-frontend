@@ -1,9 +1,10 @@
 import HeadingCard from "./components/widgets/HeadingCard";
+import Roadmap from "./components/widgets/Roadmap";
 
 function App() {
   return (
     <div className="bg-[#f7f8fd] min-h-screen min-screen">
-      <h1>App Component</h1>
+      <Roadmap />
       <HeadingCard />
     </div>
   );
