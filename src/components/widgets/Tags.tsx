@@ -2,7 +2,7 @@ const TAGS = ["All", "UI", "UX", "Enhancement", "Bug", "Feature"];
 
 const Tags = () => {
   return (
-    <article className="w-80  rounded-2xl p-7 flex justify-start items-start gap-4 flex-wrap bg-white">
+    <article className="lg:w-80 rounded-2xl p-7 flex justify-start items-start gap-4 flex-wrap bg-white">
       {TAGS.map((tag) => {
         return (
           <a

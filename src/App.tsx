@@ -1,14 +1,40 @@
-import HeadingCard from "./components/widgets/HeadingCard";
-import Roadmap from "./components/widgets/Roadmap";
-import Tags from "./components/widgets/Tags";
+import { QueryClient, QueryClientProvider } from "react-query";
+import {
+  createBrowserRouter,
+  createRoutesFromElements,
+  Outlet,
+  Route,
+  RouterProvider,
+} from "react-router-dom";
+import "../node_modules/flowbite/dist/flowbite.min.js";
+import NavBar from "./components/widgets/NavBar";
+import Home from "./pages/Home.js";
+import Login from "./pages/Login.js";
+
+const queryClient = new QueryClient();
+
+const router = createBrowserRouter(
+  createRoutesFromElements(
+    <Route
+      path="/"
+      element={
+        <div className="bg-[#f7f8fd] min-h-screen min-w-screen ">
+          <NavBar />
+          <Outlet />
+        </div>
+      }
+    >
+      <Route path="/" element={<Home />} />
+      <Route path="/login" element={<Login />} />
+    </Route>
+  )
+);
 
 function App() {
   return (
-    <div className="bg-[#f7f8fd] min-h-screen min-screen">
-      <Roadmap />
-      <HeadingCard />
-      <Tags />
-    </div>
+    <QueryClientProvider client={queryClient}>
+      <RouterProvider router={router} />
+    </QueryClientProvider>
   );
 }
 

@@ -18,7 +18,7 @@ const ROADMAPS = [
 
 const Roadmap = () => {
   return (
-    <article className="bg-white w-80 p-8 rounded-2xl ">
+    <article className="bg-white lg:w-80 p-8 rounded-2xl ">
       <section className="flex justify-between items-center mb-4">
         <h3 className="font-bold text-xl text-[#3b4374]">Roadmap</h3>
         <a className="text-[#4d65e7] font-medium underline" href="#">

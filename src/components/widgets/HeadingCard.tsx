@@ -14,7 +14,7 @@ const HeadingCardStyle = styled.article(`
 
 const HeadingCard = () => {
   return (
-    <HeadingCardStyle className="w-80 h-48 rounded-2xl p-8 flex justify-start items-end">
+    <HeadingCardStyle className="lg:h-48 lg:w-80 rounded-2xl p-8 flex justify-start items-end">
       <section className="text-white pt-4">
         <h3 className="text-3xl font-bold mb-1">Frontend Mentor</h3>
         <span className=" text-white/80 font-normal text-xl">
