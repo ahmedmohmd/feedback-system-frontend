@@ -1,33 +1,38 @@
-import Lottie from "lottie-react";
+import { useState } from "react";
 import { useQuery } from "react-query";
-import errorAnimationData from "../../assets/404.json";
-import loadingAnimationData from "../../assets/loading.json";
 import { getAllFeedbacks } from "../../services/feedbacks";
+import Error from "../atoms/Error";
+import Loading from "../atoms/Loading";
+import NoResult from "../atoms/NoResult";
 import Control from "./Control";
 import FeedbackCard from "./FeedbackCard";
 
-const FeedbacksList = () => {
+const FeedbacksList = ({ tags }) => {
+  const [sort, setSort] = useState("most-upvotes");
+
   const { data, isError, isLoading } = useQuery({
-    queryKey: "feedbacks",
+    queryKey: [sort, tags],
     queryFn: getAllFeedbacks,
   });
 
+  const handleSort = (value) => {
+    setSort(value);
+  };
+
   return (
-    <div className="flex-1 gap-8 flex-col">
-      <Control />
-      <div className="w-full mt-8 flex h-full justify-center items-center gap-6 flex-col mb-10">
+    <div className="flex-col flex-1 gap-8">
+      <Control onSort={handleSort} />
+      <div className="relative flex flex-col items-center justify-center w-full h-full gap-6 mt-8 mb-10">
         {isLoading ? (
-          <Lottie animationData={loadingAnimationData} loop={true} />
+          <Loading />
         ) : isError ? (
-          <Lottie
-            animationData={errorAnimationData}
-            className="w-1/2  h-1/2"
-            loop={true}
-          />
-        ) : (
+          <Error />
+        ) : data.length > 0 ? (
           data.map((feedback) => {
             return <FeedbackCard feedback={feedback} />;
           })
+        ) : (
+          <NoResult />
         )}
       </div>
     </div>

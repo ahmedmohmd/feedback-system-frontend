@@ -13,6 +13,7 @@ module.exports = {
     },
     fontFamily: {
       ubuntu: "Ubuntu",
+      modak: "Modak",
     },
   },
   plugins: [require("flowbite/plugin")],

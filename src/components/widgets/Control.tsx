@@ -1,25 +1,7 @@
-import { useFormik } from "formik";
-import { useState } from "react";
 import { FaMedapps } from "react-icons/fa";
-import { GoPlus } from "react-icons/go";
-import { Link } from "react-router-dom";
-import * as yup from "yup";
 import CreateFeedback from "./CreateFeedback";
 
-const feedbackSchema = yup.object({
-  title: yup.string().required(),
-  description: yup.string().required(),
-  roadmap: yup.string().required("Please choose one of them."),
-  categories: yup.array(yup.string()).required(),
-});
-
-const Control = () => {
-  const [sort, setSort] = useState("most-upvotes");
-
-  const handleSort = (event: any) => {
-    setSort(event.target.value);
-  };
-
+const Control = ({ onSort }) => {
   return (
     <article className="bg-[#373e68] text-white rounded-2xl p-4 md:py-5 md:px-6 h-24 flex justify-between items-center">
       <section className="flex justify-between items-center gap-6">
@@ -34,7 +16,7 @@ const Control = () => {
           <span> Sort By:</span>
           <select
             name="sort"
-            onChange={handleSort}
+            onChange={(event: any) => onSort(event.target.value)}
             className="bg-[#373e68] border-none font-bold rounded-xl outline-none !ring-0 hover:cursor-pointer text-white"
           >
             <option selected value="most-upvotes">

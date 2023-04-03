@@ -10,6 +10,7 @@ import "../node_modules/flowbite/dist/flowbite.min.js";
 import NavBar from "./components/widgets/NavBar";
 import Home from "./pages/Home.js";
 import Login from "./pages/Login.js";
+import NotFound from "./pages/NotFound.js";
 
 const queryClient = new QueryClient();
 
@@ -26,6 +27,7 @@ const router = createBrowserRouter(
     >
       <Route path="/" element={<Home />} />
       <Route path="/login" element={<Login />} />
+      <Route path="*" element={<NotFound />} />
     </Route>
   )
 );
