@@ -30,7 +30,7 @@ const Roadmap = () => {
         <ul>
           {ROADMAPS.map(({ name, color, count }) => {
             return (
-              <li className="flex justify-between items-center">
+              <li key={name} className="flex justify-between items-center">
                 <section className="flex justify-center items-center g-10 ">
                   <span className={`w-2 h-2 ${color} rounded-full mr-3`} />
                   <span className="text-[#8993b0]">{name}</span>

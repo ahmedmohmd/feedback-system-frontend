@@ -24,3 +24,24 @@ select {
   appearance: none;
   background-size: 14px !important;
 }
+
+div[drawer-backdrop] {
+  z-index: 40;
+}
+
+.relative.rounded-lg.bg-white.shadow {
+  height: 450px;
+  width: 400px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+@media (max-width: 768px) {
+  .relative.rounded-lg.bg-white.shadow {
+    height: 400px;
+    width: 300px;
+  }
+}

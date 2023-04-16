@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useId, useState } from "react";
 
 const TAGS = ["All", "UI", "UX", "Enhancement", "Bug", "Feature"];
 
@@ -29,8 +29,8 @@ const Tags = ({ onTag }) => {
     <article className="flex flex-wrap items-start justify-start gap-4 bg-white lg:w-80 rounded-2xl p-7">
       {TAGS.map((tag) => {
         return (
-          <a
-            href="#"
+          <button
+            key={Math.random()}
             className={`${
               tags.includes(tag)
                 ? "text-white bg-[#4661e6]"
@@ -39,7 +39,7 @@ const Tags = ({ onTag }) => {
             onClick={() => handleClick(tag)}
           >
             {tag}
-          </a>
+          </button>
         );
       })}
     </article>

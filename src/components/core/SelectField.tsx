@@ -1,16 +1,20 @@
+import { useId } from "react";
 import Label from "../atoms/Label";
 
 const SelectField = ({ name, label, options, ...others }) => {
+  const uniqueKey = useId();
+
   return (
     <section className="flex justify-center items-start  flex-col w-full">
       <Label name={name} to={label} />
-      <select {...others} name="roadmap">
+      <select
+        // defaultValue={options.find((option) => option.selected.toString())}
+        name="roadmap"
+        {...others}
+      >
         {options.map((option) => {
           return (
-            <option
-              selected={options.selected ? option.selected : false}
-              value={option.value}
-            >
+            <option key={Math.random()} value={option.value}>
               {option.name}
             </option>
           );

@@ -1,16 +1,14 @@
 import styled from "@emotion/styled";
 import { useFormik } from "formik";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { AiFillEyeInvisible } from "react-icons/ai";
+import { BiShow } from "react-icons/bi";
 import { useMutation } from "react-query";
 import * as yup from "yup";
 import ErrorMessage from "../components/atoms/ErrorMessage";
 import Label from "../components/atoms/Label";
 import InputField from "../components/core/InputField";
 import authService from "../services/authService";
-
-import { BiShow } from "react-icons/bi";
-import { Link } from "react-router-dom";
 
 const Heading = styled.h1`
   position: relative;
@@ -19,10 +17,10 @@ const Heading = styled.h1`
     --deco-height: 0.3125em;
     content: "";
     position: absolute;
+    z-index: 10;
     left: 0;
     width: 75%;
     left: 50%;
-    z-index: 10;
     transform: translateX(-50%);
     bottom: calc(var(--deco-height) * -1.3);
     height: var(--deco-height);
@@ -34,6 +32,7 @@ const Heading = styled.h1`
 `;
 
 const signInSchema = yup.object({
+  name: yup.string().required(),
   email: yup.string().email().required(),
   password: yup
     .string()
@@ -43,18 +42,26 @@ const signInSchema = yup.object({
 });
 
 const initialValues = {
+  name: "",
   email: "",
   password: "",
 };
 
-const Login = () => {
+const Register = () => {
   const [show, setShow] = useState(false);
+  const [image, setImage] = useState<any>();
+  const [imagePreview, setImagePreview] = useState("");
+  const imageInput = useRef<any>(null);
 
-  const handleSignIn = (values) => {
-    mutate({
-      email: values.email,
-      password: values.password,
-    });
+  const handleRegister = (values) => {
+    const formData = new FormData();
+
+    formData.append("name", values.name);
+    formData.append("email", values.email);
+    formData.append("password", values.password);
+    formData.append("image", image);
+
+    mutate(formData);
   };
 
   const {
@@ -68,11 +75,14 @@ const Login = () => {
   } = useFormik({
     initialValues,
     validationSchema: signInSchema,
-    onSubmit: handleSignIn,
+    onSubmit: handleRegister,
   });
 
   const { mutate, isLoading } = useMutation({
-    mutationFn: authService.login,
+    mutationFn: authService.register,
+    onSuccess: () => {
+      location.href = "/login";
+    },
     onError: (error: any) => {
       if (error.message) {
         if (error.message.startsWith("Password")) {
@@ -85,8 +95,8 @@ const Login = () => {
           });
         }
       } else {
-        const passRegEx = /\bpassword\b/;
-        const emailRegEx = /\bemail\b/;
+        const passRegEx = /\bpassword\b/i;
+        const emailRegEx = /\bemail\b/i;
 
         setErrors({
           password: error.errors.find((error) => passRegEx.test(error.msg))
@@ -95,29 +105,39 @@ const Login = () => {
         });
       }
     },
-
-    onSuccess: ({ data: { token } }) => {
-      authService.setToken(token);
-      location.href = "/";
-    },
   });
 
   return (
     <article className="container w-full px-4 mx-auto ">
-      <div className="w-full flex justify-center items-center h-[calc(100vh-100px)] md:h-[calc(100vh-150px)]">
+      <div className="w-full flex justify-center items-center min-h-[calc(100vh-100px)] md:min-h-[calc(100vh-150px)]">
         <img
-          className="hidden md:block w-[600px]"
-          src="/images/login.png"
+          className="hidden md:block w-[600px] -rotate-12"
+          src="/images/register.png"
           alt="Login Icon"
         />
 
         <form
           onSubmit={handleSubmit}
-          className="flex flex-col items-center justify-center flex-1 gap-4 md:gap-6"
+          className="flex flex-col items-center justify-center flex-1 gap-4 md:gap-6 my-16"
         >
           <Heading className="text-center text-6xl mb-14 font-modak text-[#6c63ff] tracking-widest">
-            Sign In
+            Register
           </Heading>
+
+          <InputField
+            id="name"
+            name="Name"
+            label="name"
+            value={values.name}
+            errors={errors}
+            touched={touched}
+            type="text"
+            placeholder="exmaple: Ahmed Mohamed"
+            onChange={handleChange}
+            onBlur={handleBlur}
+            containerClassName="flex justify-center items-start flex-col w-full md:w-[60%]"
+            inputClassName="font-medium bg-slate-50 text-slate-500 focus:!text-primary duration-300 focus:!border-primary border-2 placeholder:text-gray-400/50 !border-gray-200 rounded-full px-5 h-14 outline-none !ring-0 w-full"
+          />
 
           <InputField
             id="email"
@@ -149,7 +169,7 @@ const Login = () => {
               />
 
               <span
-                className="absolute z-20 -translate-y-1/2 right-5 top-1/2 hover:cursor-pointer"
+                className="absolute z-30 -translate-y-1/2 right-5 top-1/2 hover:cursor-pointer"
                 onClick={() => {
                   setShow(!show);
                 }}
@@ -161,26 +181,50 @@ const Login = () => {
                 )}
               </span>
             </section>
-            <ErrorMessage errors={errors.password} touched={touched.password} />
           </section>
+
+          <section className="flex flex-col items-start justify-center flex-1 w-full md:w-[60%]">
+            <section className="relative w-full">
+              <Label name="Image" to="image" />
+              <label
+                htmlFor="image"
+                className="w-1/2 h-14 mt-2 rounded-full flex justify-start pl-5 bg-slate-700/90 truncate text-white/90 hover:cursor-pointer items-center text-md font-medium"
+              >
+                Click Here to Upload
+              </label>
+
+              <input
+                id="image"
+                name="image"
+                ref={imageInput}
+                onChange={(event: any) => {
+                  setImage(event.target.files[0]);
+                  const imageUrl = URL.createObjectURL(event.target.files[0]);
+                  setImagePreview(imageUrl);
+                }}
+                type="file"
+                className="hidden w-full text-sm text-slate-500 border-2 border-gray-300 cursor-pointer bg-gray-50  focus:outline-none rounded-full"
+              />
+            </section>
+          </section>
+
+          {imagePreview ? (
+            <img
+              className="rounded-3xl w-full md:h-[60%] h-full md:w-[60%]"
+              src={imagePreview}
+              alt="Image Preview"
+            />
+          ) : null}
           <button
             type="submit"
-            className={`py-3 mt-6 font-semibold text-white duration-300 rounded-3xl ${
-              isLoading ? "bg-primary/70" : "bg-primary/90 hover:bg-primary"
-            } px-9`}
+            className="py-3 mt-4 font-semibold text-white duration-300 rounded-3xl bg-primary/90 hover:bg-primary px-9"
           >
-            {isLoading ? "wait..." : "Login"}
+            {isLoading ? "Registering..." : "Register"}
           </button>
-          <Link
-            to="/reset"
-            className="text-primary underline text-md -mt-2 md:-mt-3 underline-offset-[2px]"
-          >
-            Forgot Your Password!
-          </Link>
         </form>
       </div>
     </article>
   );
 };
 
-export default Login;
+export default Register;

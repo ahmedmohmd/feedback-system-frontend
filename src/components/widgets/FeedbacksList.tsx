@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useId, useState } from "react";
 import { useQuery } from "react-query";
 import { getAllFeedbacks } from "../../services/feedbacks";
 import Error from "../atoms/Error";
@@ -9,6 +9,7 @@ import FeedbackCard from "./FeedbackCard";
 
 const FeedbacksList = ({ tags }) => {
   const [sort, setSort] = useState("most-upvotes");
+  const uniqueKey = useId();
 
   const { data, isError, isLoading } = useQuery({
     queryKey: [sort, tags],
@@ -22,14 +23,14 @@ const FeedbacksList = ({ tags }) => {
   return (
     <div className="flex-col flex-1 gap-8">
       <Control onSort={handleSort} />
-      <div className="relative flex flex-col items-center justify-center w-full h-full gap-6 mt-8 mb-10">
+      <div className="relative z-10 flex flex-col items-center justify-center w-full h-full gap-6 mt-8 mb-10">
         {isLoading ? (
           <Loading />
         ) : isError ? (
           <Error />
         ) : data.length > 0 ? (
           data.map((feedback) => {
-            return <FeedbackCard feedback={feedback} />;
+            return <FeedbackCard key={Math.random()} feedback={feedback} />;
           })
         ) : (
           <NoResult />

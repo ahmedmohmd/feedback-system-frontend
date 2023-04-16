@@ -1,7 +1,14 @@
+import { Modal } from "flowbite-react";
+import { useState } from "react";
 import { FaMedapps } from "react-icons/fa";
+import { GoPlus } from "react-icons/go";
+import { Link } from "react-router-dom";
+import CustomModal from "../atoms/CustomModal";
 import CreateFeedback from "./CreateFeedback";
 
 const Control = ({ onSort }) => {
+  const [show, setShow] = useState(false);
+
   return (
     <article className="bg-[#373e68] text-white rounded-2xl p-4 md:py-5 md:px-6 h-24 flex justify-between items-center">
       <section className="flex justify-between items-center gap-6">
@@ -17,17 +24,28 @@ const Control = ({ onSort }) => {
           <select
             name="sort"
             onChange={(event: any) => onSort(event.target.value)}
+            defaultValue="most-upvotes"
             className="bg-[#373e68] border-none font-bold rounded-xl outline-none !ring-0 hover:cursor-pointer text-white"
           >
-            <option selected value="most-upvotes">
-              Most Upvotes
-            </option>
+            <option value="most-upvotes">Most Upvotes</option>
             <option value="most-comments">Most Comments</option>
           </select>
         </label>
       </section>
 
-      <CreateFeedback />
+      <Link
+        to="/"
+        onClick={() => setShow(true)}
+        className="group duration-300 flex justify-center items-center gap-2 p-1 py-4 md:py-3 md:px-4 md:!h-full h-14 w-14 md:w-auto rounded-full bg-primary md:hover:bg-purple-600 md:rounded-2xl font-bold"
+      >
+        <GoPlus className="md:group-hover:rotate-0 group-hover:rotate-180 duration-300 md:group-hover:scale-[1] group-hover:scale-[1.3] font-bold text-2xl md:text-xl " />
+        <span className="flex-1 hidden text-sm md:block">Add Feedback</span>
+      </Link>
+
+      <Modal show={show} onClose={() => setShow(false)}>
+        <CreateFeedback />
+      </Modal>
+      {/* <CustomModal /> */}
     </article>
   );
 };
