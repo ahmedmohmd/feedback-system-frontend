@@ -1,15 +1,21 @@
-import { useEffect, useId, useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import GlobalContext from "../../utils/globalContext";
 
 const TAGS = ["All", "UI", "UX", "Enhancement", "Bug", "Feature"];
 
-const Tags = ({ onTag }) => {
+const Tags = () => {
   const [tags, setTags] = useState<string[]>(["All"]);
+  const { onTag } = useContext(GlobalContext);
 
   useEffect(() => {
-    onTag(tags);
+    onTag(tags.filter((tag) => tag !== "All"));
   }, [tags]);
 
   const handleClick = (tag) => {
+    if (tag === "All") {
+      return;
+    }
+
     if (!tags.includes(tag)) {
       setTags([...tags, tag]);
     } else {

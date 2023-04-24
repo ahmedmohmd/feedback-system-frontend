@@ -4,6 +4,7 @@ import httpService from "./httpService";
 // Token Handling
 const setToken = (token: string) => localStorage.setItem("token", token);
 const removeToken = () => localStorage.removeItem("token");
+const getToken = () => localStorage.getItem("token");
 
 const login = (userData) => {
   return httpService.post(`${config.baseUrl}/auth/login`, userData);
@@ -33,4 +34,5 @@ export default {
   removeToken,
   logout,
   resetRequest,
+  getToken,
 };

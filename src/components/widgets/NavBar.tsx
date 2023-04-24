@@ -79,11 +79,11 @@ const NavBar = () => {
                 Home
               </NavLink>
             </li>
-            {user?.name ? (
+            {user ? (
               <UserMenu
-                name={user?.name}
-                image={user?.image}
-                email={user?.email}
+                name={user.name}
+                image={user.image}
+                email={user.email}
               />
             ) : (
               <>

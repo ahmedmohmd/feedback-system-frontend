@@ -2,10 +2,10 @@ import { Modal } from "flowbite-react";
 import { useFormik } from "formik";
 import { useId, useState } from "react";
 import { GoPlus } from "react-icons/go";
-import { useMutation, useQueries, useQuery } from "react-query";
-import { Link } from "react-router-dom";
+import { RefetchOptions, useMutation } from "react-query";
 import * as yup from "yup";
 import feedbackService from "../../services/feedbackService";
+import queryClient from "../../utils/queryClient";
 import Label from "../atoms/Label";
 import InputField from "../core/InputField";
 import SelectField from "../core/SelectField";
@@ -45,16 +45,11 @@ const roadmapOptions = [
 const tags = ["UI", "UX", "Enhancement", "Bug", "Feature"];
 
 const CreateFeedback = () => {
-  const [show, setShow] = useState<false>(false);
-
-  const uniqueKey = useId();
-
   const { mutate, isLoading } = useMutation({
     mutationFn: feedbackService.createFeedback,
     onError: (error) => console.error(error),
     onSuccess: ({ data }) => {
-      // console.log(data);
-      location.href = "/";
+      queryClient.refetchQueries();
     },
   });
 

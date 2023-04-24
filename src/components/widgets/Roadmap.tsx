@@ -1,34 +1,42 @@
+import { useContext } from "react";
+import { Link } from "react-router-dom";
+import GlobalContext from "../../utils/globalContext";
+
 const ROADMAPS = [
   {
     name: "Planned",
     color: "bg-[#f49e85]",
-    count: 2,
+    value: "planned",
   },
   {
     name: "In-Progress",
     color: "bg-[#ae1feb]",
-    count: 3,
+    value: "in-progress",
   },
   {
     name: "Live",
     color: "bg-[#61bcfa]",
-    count: 1,
+    value: "live",
   },
 ];
 
 const Roadmap = () => {
+  const {
+    feedbacks: { data },
+  } = useContext(GlobalContext);
+
   return (
     <article className="bg-white lg:w-80 p-8 rounded-2xl ">
       <section className="flex justify-between items-center mb-4">
         <h3 className="font-bold text-xl text-[#3b4374]">Roadmap</h3>
-        <a className="text-[#4d65e7] font-medium underline" href="#">
+        <Link to="/roadmap" className="text-[#4d65e7] font-medium underline">
           View
-        </a>
+        </Link>
       </section>
 
       <section>
         <ul>
-          {ROADMAPS.map(({ name, color, count }) => {
+          {ROADMAPS.map(({ name, color, value }) => {
             return (
               <li key={name} className="flex justify-between items-center">
                 <section className="flex justify-center items-center g-10 ">
@@ -37,7 +45,7 @@ const Roadmap = () => {
                 </section>
 
                 <span className="text-[#627198] font-bold text-lg">
-                  {count}
+                  {data.filter((feedback) => feedback.roadmap === value).length}
                 </span>
               </li>
             );

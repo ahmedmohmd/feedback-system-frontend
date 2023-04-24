@@ -5,4 +5,14 @@ const createFeedback = (data: any) => {
   return httpService.post(`${config.baseUrl}/feedbacks`, data);
 };
 
-export default { createFeedback };
+const getAllFeedbacks = async (keys) => {
+  return httpService.get(
+    `${config.baseUrl}/home/?sort=${keys.queryKey[0]}&tags=${keys.queryKey[1]}`
+  );
+};
+
+const getSingleFeedback = ({ queryKey }) => {
+  return httpService.get(`${config.baseUrl}/feedbacks/${queryKey[0]}`);
+};
+
+export default { createFeedback, getAllFeedbacks, getSingleFeedback };

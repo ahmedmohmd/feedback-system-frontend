@@ -7,13 +7,16 @@ const TextareaField = ({
   errors,
   touched,
   containerClassName = "",
-  textareaClassName = "",
+  textareaClassName = "bg-[#f8fafc]",
   ...others
 }) => {
   return (
     <section className={containerClassName}>
       <Label to={name} name={label} />
-      <textarea className={textareaClassName} {...others} />
+      <textarea
+        className={textareaClassName + " placeholder:font-normal mt-2"}
+        {...others}
+      />
       <ErrorMessage errors={errors[name]} touched={touched[name]} />
     </section>
   );

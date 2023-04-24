@@ -22,13 +22,17 @@ const InputField = ({
   touched,
   type,
   containerClassName = "",
-  inputClassName = "",
+  inputClassName = "bg-[#f8fafc]",
   ...others
 }) => {
   return (
     <section className={containerClassName}>
       <Label to={name} name={label} />
-      <input type={type} className={inputClassName} {...others} />
+      <input
+        type={type}
+        className={inputClassName + " placeholder:font-normal mt-2"}
+        {...others}
+      />
       <ErrorMessage errors={errors[name]} touched={touched[name]} />
     </section>
   );

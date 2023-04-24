@@ -1,6 +1,6 @@
 import jwtDecode from "jwt-decode";
 import { useEffect, useState } from "react";
-import { QueryClient, QueryClientProvider } from "react-query";
+import { QueryClient, QueryClientProvider, useQuery } from "react-query";
 import {
   Navigate,
   Outlet,
@@ -13,7 +13,12 @@ import { ToastContainer } from "react-toastify";
 import "../node_modules/flowbite/dist/flowbite.min.js";
 import Default from "./components/atoms/DefaultTab.js";
 import Security from "./components/atoms/SecurityTab.js";
+import InProgress from "./components/widgets/InProgress.js";
+import Live from "./components/widgets/Live.js";
 import NavBar from "./components/widgets/NavBar";
+import Planned from "./components/widgets/Planned.js";
+import Comments from "./pages/Comments.js";
+import CreateFeedback from "./pages/CreateFeedback.js";
 import Home from "./pages/Home.js";
 import Login from "./pages/Login.js";
 import NewPassword from "./pages/NewPassword.js";
@@ -21,29 +26,36 @@ import NotFound from "./pages/NotFound.js";
 import Profile from "./pages/Profile.js";
 import Register from "./pages/Register.js";
 import ResetRequest from "./pages/ResetRequest.js";
+import Roadmap from "./pages/Roadmap.js";
+import authService from "./services/authService.js";
+import homeService from "./services/globalService.js";
 import GlobalContext from "./utils/globalContext.js";
 
-const queryClient = new QueryClient();
-
 function App() {
-  const [user, setUser] = useState<any>(null);
-  // useEffect(() => {
-  //   if (localStorage.getItem("user") && localStorage.getItem("token")) {
-  //     if (!localStorage.getItem("expireTime")) {
-  //       localStorage.setItem(
-  //         "expireTime",
-  //         JSON.stringify(Date.now() + 60 * 60 * 1000)
-  //       );
-  //     }
+  const [user, setUser] = useState<any>({});
+  const [feedbacks, setFeedbacks] = useState<any[]>([]);
+  const [tags, setTags] = useState<string[]>([]);
+  const [sort, setSort] = useState<string>("most-upvotes");
+  const [expiryTime, setExpiryTime] = useState<number>(
+    +(localStorage?.getItem("expiryTime") || 0)
+  );
 
-  //     if (Date.now() >= +localStorage?.getItem("expireTime")!) {
-  //       localStorage.removeItem("user");
-  //       localStorage.removeItem("token");
-  //       localStorage.removeItem("expireTime");
-  //       location.href = "/login";
-  //     }
-  //   }
-  // });
+  const { isLoading, isError } = useQuery({
+    queryFn: homeService.getFeedbacks,
+    queryKey: ["feedbacks", tags, sort],
+    onSuccess: ({ data }) => {
+      setFeedbacks(data);
+    },
+    onError: (error) => console.log(error),
+  });
+
+  const handleTags = (tags) => {
+    setTags(tags);
+  };
+
+  const handleSort = (sort) => {
+    setSort(sort);
+  };
 
   useEffect(() => {
     const token = localStorage.getItem("token") || "";
@@ -51,8 +63,26 @@ function App() {
     if (token) {
       const decodedToken = jwtDecode(token);
       setUser(decodedToken);
+    } else {
+      setUser(null);
     }
   }, []);
+
+  useEffect(() => {
+    const token = authService.getToken();
+    const currentTime = new Date().getTime();
+
+    if (token && currentTime > expiryTime) {
+      localStorage.removeItem("token");
+      localStorage.removeItem("expiryTime");
+      location.href = "/login";
+    } else {
+      const timeUntilExpiry = expiryTime - currentTime;
+      setTimeout(() => {
+        setExpiryTime(+(localStorage.getItem("expiryTime") || 0));
+      }, timeUntilExpiry);
+    }
+  }, [expiryTime]);
 
   const router = createBrowserRouter(
     createRoutesFromElements(
@@ -77,6 +107,16 @@ function App() {
           <Route path="security" element={<Security />} />
         </Route>
         <Route path="/reset" element={<ResetRequest />} />
+        <Route path="/roadmap/*" element={<Roadmap />}>
+          <Route path="planned" element={<Planned />} />
+          <Route path="in-progress" element={<InProgress />} />
+          <Route path="live" element={<Live />} />
+        </Route>
+        <Route path="/feedbacks/:feedbackId" element={<Comments />} />
+        <Route
+          path="/create-feedback"
+          element={user ? <CreateFeedback /> : <Navigate to="/login" />}
+        />
         <Route path="/new-password/:resetToken" element={<NewPassword />} />
         <Route path="*" element={<NotFound />} />
       </Route>
@@ -84,15 +124,20 @@ function App() {
   );
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <GlobalContext.Provider
-        value={{
-          user: user,
-        }}
-      >
-        <RouterProvider router={router} />
-      </GlobalContext.Provider>
-    </QueryClientProvider>
+    <GlobalContext.Provider
+      value={{
+        user,
+        feedbacks: {
+          data: feedbacks,
+          isError,
+          isLoading,
+        },
+        onTag: handleTags,
+        onSort: handleSort,
+      }}
+    >
+      <RouterProvider router={router} />
+    </GlobalContext.Provider>
   );
 }
 
