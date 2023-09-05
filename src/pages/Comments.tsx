@@ -16,7 +16,7 @@ const Comments = () => {
   const [feedback, setFeedback] = useState(null);
   const [comments, setComments] = useState<any[]>([]);
   const [isCommenting, setIsCommenting] = useState<boolean>(false);
-  const { user } = useContext(GlobalContext);
+  const { user } = useContext(GlobalContext)!;
 
   const handleCommenting = (state: boolean) => {
     setIsCommenting(state);
@@ -32,7 +32,6 @@ const Comments = () => {
         queryKey: [data._id],
       });
       setComments(comments);
-      queryClient.invalidateQueries("feedback");
     },
   });
 
@@ -75,7 +74,7 @@ const Comments = () => {
             </h3>
           )}
 
-          {comments.map((comment) => (
+          {comments.map((comment: any) => (
             <Comment
               feedbackId={feedbackId}
               key={comment._id}

@@ -4,7 +4,7 @@ import { useId, useState } from "react";
 import { GoPlus } from "react-icons/go";
 import { TiArrowLeftThick } from "react-icons/ti";
 import { RefetchOptions, useMutation } from "react-query";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import * as yup from "yup";
 import Label from "../components/atoms/Label";
 import InputField from "../components/core/InputField";
@@ -47,11 +47,14 @@ const roadmapOptions = [
 const tags = ["UI", "UX", "Enhancement", "Bug", "Feature"];
 
 const CreateFeedback = () => {
+  const navigate = useNavigate();
+
   const { mutate, isLoading } = useMutation({
     mutationFn: feedbackService.createFeedback,
     onError: (error) => console.error(error),
     onSuccess: ({ data }) => {
-      queryClient.refetchQueries();
+      queryClient.invalidateQueries();
+      navigate("/");
     },
   });
 

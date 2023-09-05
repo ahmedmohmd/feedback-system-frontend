@@ -3,6 +3,7 @@ import { useFormik } from "formik";
 import { useId, useState } from "react";
 import { GoPlus } from "react-icons/go";
 import { RefetchOptions, useMutation } from "react-query";
+import { useNavigate } from "react-router-dom";
 import * as yup from "yup";
 import feedbackService from "../../services/feedbackService";
 import queryClient from "../../utils/queryClient";
@@ -45,11 +46,16 @@ const roadmapOptions = [
 const tags = ["UI", "UX", "Enhancement", "Bug", "Feature"];
 
 const CreateFeedback = () => {
+  const navigate = useNavigate();
+
   const { mutate, isLoading } = useMutation({
     mutationFn: feedbackService.createFeedback,
     onError: (error) => console.error(error),
     onSuccess: ({ data }) => {
       queryClient.refetchQueries();
+      console.log(data);
+
+      // navigate("/");
     },
   });
 

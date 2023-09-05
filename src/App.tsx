@@ -44,16 +44,16 @@ function App() {
     queryFn: homeService.getFeedbacks,
     queryKey: ["feedbacks", tags, sort],
     onSuccess: ({ data }) => {
-      setFeedbacks(data);
+      setFeedbacks(data.data);
     },
     onError: (error) => console.log(error),
   });
 
-  const handleTags = (tags) => {
+  const handleTags = (tags: string[]) => {
     setTags(tags);
   };
 
-  const handleSort = (sort) => {
+  const handleSort = (sort: string) => {
     setSort(sort);
   };
 

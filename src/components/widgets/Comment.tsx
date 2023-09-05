@@ -6,7 +6,7 @@ import GlobalContext from "../../utils/globalContext";
 import queryClient from "../../utils/queryClient";
 
 const Comment = ({ comment, feedbackId }) => {
-  const { user } = useContext(GlobalContext);
+  const { user } = useContext(GlobalContext)!;
 
   const { mutate, isLoading } = useMutation({
     mutationFn: commentsService.deleteComment,

@@ -6,13 +6,13 @@ const getComments = ({ queryKey }) => {
 };
 const postComment = ({ commentData, feedbackId }) => {
   return httpService.post(
-    `${config.baseUrl}/comments/${feedbackId}`,
+    `${config.baseUrl}/feedbacks/${feedbackId}/comments`,
     commentData
   );
 };
 const deleteComment = ({ commentId, feedbackId }) => {
   return httpService.delete(
-    `${config.baseUrl}/comments/${feedbackId}/${commentId}`
+    `${config.baseUrl}/feedbacks/comments/${feedbackId}/${commentId}`
   );
 };
 
