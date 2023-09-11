@@ -5,7 +5,7 @@ const TAGS = ["All", "UI", "UX", "Enhancement", "Bug", "Feature"];
 
 const Tags = () => {
   const [tags, setTags] = useState<string[]>(["All"]);
-  const { onTag } = useContext(GlobalContext);
+  const { onTag }: any = useContext(GlobalContext);
 
   useEffect(() => {
     onTag(tags.filter((tag) => tag !== "All"));

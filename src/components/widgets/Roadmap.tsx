@@ -23,7 +23,7 @@ const ROADMAPS = [
 const Roadmap = () => {
   const {
     feedbacks: { data },
-  } = useContext(GlobalContext);
+  }: any = useContext(GlobalContext);
 
   return (
     <article className="bg-white lg:w-80 p-8 rounded-2xl ">

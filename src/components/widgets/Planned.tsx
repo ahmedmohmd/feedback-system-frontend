@@ -5,7 +5,7 @@ import FeedbackCard from "./FeedbackCard";
 const Planned = () => {
   const {
     feedbacks: { data },
-  } = useContext(GlobalContext);
+  }: any = useContext(GlobalContext);
 
   return data
     .filter((feedback) => feedback.roadmap === "planned")

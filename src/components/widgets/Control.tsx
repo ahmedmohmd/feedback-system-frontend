@@ -7,7 +7,10 @@ import GlobalContext from "../../utils/globalContext";
 import CreateFeedback from "./CreateFeedback";
 
 const Control = () => {
-  const { onSort } = useContext(GlobalContext);
+  const {
+    onSort,
+    feedbacks: { data },
+  }: any = useContext(GlobalContext);
 
   return (
     <article className="bg-[#373e68] text-white rounded-2xl p-4 md:py-5 md:px-6 h-24 flex justify-between items-center">
@@ -17,7 +20,9 @@ const Control = () => {
             color="white"
             className="text-2xl md:text-4xl font-bold "
           />
-          <span className="md:text-2xl font-bold">6 Suggestions</span>
+          <span className="md:text-2xl font-bold">
+            {data.length} Suggestions
+          </span>
         </section>
         <label className="flex justify-center items-center">
           <span> Sort By:</span>

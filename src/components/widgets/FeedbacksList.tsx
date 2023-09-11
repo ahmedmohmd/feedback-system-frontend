@@ -11,7 +11,7 @@ import FeedbackCard from "./FeedbackCard";
 const FeedbacksList = () => {
   const {
     feedbacks: { data, isError, isLoading },
-  } = useContext(GlobalContext);
+  }: any = useContext(GlobalContext);
 
   return (
     <div className="flex-col flex-1 gap-8">
