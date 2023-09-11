@@ -1,4 +1,5 @@
 import styled from "@emotion/styled";
+import { yupResolver } from "@hookform/resolvers/yup";
 import { useFormik } from "formik";
 import { useState } from "react";
 import { AiFillEyeInvisible } from "react-icons/ai";
@@ -8,6 +9,8 @@ import ErrorMessage from "../components/atoms/ErrorMessage";
 import Label from "../components/atoms/Label";
 import InputField from "../components/core/InputField";
 import authService from "../services/authService";
+
+import { Controller, useForm } from "react-hook-form";
 
 import { BiShow } from "react-icons/bi";
 import { Link } from "react-router-dom";
@@ -57,18 +60,29 @@ const Login = () => {
     });
   };
 
+  // const {
+  //   handleSubmit,
+  //   errors,
+  //   values,
+  //   handleBlur,
+  //   handleChange,
+  //   touched,
+  //   setErrors,
+  // } = useFormik({
+  //   initialValues,
+  //   validationSchema: signInSchema,
+  //   onSubmit: handleSignIn,
+  // });
+
   const {
+    register,
     handleSubmit,
-    errors,
-    values,
-    handleBlur,
-    handleChange,
-    touched,
-    setErrors,
-  } = useFormik({
-    initialValues,
-    validationSchema: signInSchema,
-    onSubmit: handleSignIn,
+    formState: { errors },
+    setError,
+    control,
+  } = useForm({
+    resolver: yupResolver(signInSchema),
+    mode: "onTouched",
   });
 
   const { mutate, isLoading } = useMutation({
@@ -76,23 +90,16 @@ const Login = () => {
     onError: (error: any) => {
       if (error.message) {
         if (error.message.startsWith("Password")) {
-          setErrors({
-            password: error.message,
+          setError("password", {
+            type: "custom",
+            message: error.message,
           });
         } else {
-          setErrors({
-            email: error.message,
+          setError("email", {
+            type: "custom",
+            message: error.message,
           });
         }
-      } else {
-        const passRegEx = /\bpassword\b/;
-        const emailRegEx = /\bemail\b/;
-
-        setErrors({
-          password: error.errors.find((error) => passRegEx.test(error.msg))
-            ?.msg,
-          email: error.errors.find((error) => emailRegEx.test(error.msg))?.msg,
-        });
       }
     },
 
@@ -115,44 +122,41 @@ const Login = () => {
         />
 
         <form
-          onSubmit={handleSubmit}
+          onSubmit={handleSubmit(handleSignIn)}
           className="flex flex-col items-center justify-center flex-1 gap-4 md:gap-6"
         >
           <Heading className="text-center text-6xl mb-14 font-modak text-[#6c63ff] tracking-widest">
             Sign In
           </Heading>
 
-          <InputField
-            id="email"
+          <Controller
             name="email"
-            label="Email"
-            value={values.email}
-            errors={errors}
-            touched={touched}
-            type="email"
-            placeholder="name@example.com"
-            onChange={handleChange}
-            onBlur={handleBlur}
-            containerClassName="flex justify-center items-start flex-col w-full md:w-[60%]"
-            inputClassName=" bg-slate-50 text-slate-500 focus:!text-primary duration-300 focus:!border-primary border-2 placeholder:text-gray-400/50 !border-gray-200 rounded-full px-5 h-14 outline-none !ring-0 w-full"
+            control={control}
+            render={({ field }) => (
+              <InputField
+                {...field}
+                errors={errors}
+                title={"Email"}
+                field={"email"}
+                type={"email"}
+                to={"email"}
+              />
+            )}
           />
 
           <section className="flex flex-col items-start justify-center flex-1 w-full md:w-[60%]">
-            <Label name="Password" to="password" />
+            <Label title="Password" to="password" />
             <section className="relative w-full">
               <input
                 id="password"
                 placeholder="password should be between 8 to 15 char"
-                name="password"
                 type={show ? "text" : "password"}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                value={values.password}
+                {...register("password")}
                 className=" bg-slate-50 text-slate-500 focus:!text-primary duration-300 focus:!border-primary border-2 placeholder:text-gray-400/50 !border-gray-200 rounded-full px-5 h-14 outline-none !ring-0 w-full"
               />
 
               <span
-                className="absolute z-20 -translate-y-1/2 right-5 top-1/2 hover:cursor-pointer"
+                className="absolute z-30 -translate-y-1/2 right-5 top-1/2 hover:cursor-pointer"
                 onClick={() => {
                   setShow(!show);
                 }}
@@ -164,7 +168,7 @@ const Login = () => {
                 )}
               </span>
             </section>
-            <ErrorMessage errors={errors.password} touched={touched.password} />
+            <ErrorMessage errors={errors} field={"password"} />
           </section>
 
           <button

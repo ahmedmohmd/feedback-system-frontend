@@ -27,10 +27,10 @@ const LINKS = [
 ];
 
 const NavBar = () => {
-  const { user } = useContext(GlobalContext);
+  const { user } = useContext(GlobalContext)!;
 
   return (
-    <nav className="sticky z-40 top-0 left-0 shadow p-3 py-4 border-gray-200 bg-[#f7f8fd]">
+    <nav className="sticky z-40 top-0 left-0 shadow p-3 py-4 border-gray-200 bg-[#f7f8fd]/80 backdrop-blur-2xl">
       <div className="container flex flex-wrap items-center justify-between mx-auto">
         <Link to="/" className="flex justify-center items-center">
           <img

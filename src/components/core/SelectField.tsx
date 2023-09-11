@@ -2,8 +2,6 @@ import { useId } from "react";
 import Label from "../atoms/Label";
 
 const SelectField = ({ name, label, options, ...others }) => {
-  const uniqueKey = useId();
-
   return (
     <section className="flex justify-center items-start  flex-col w-full">
       <Label name={name} to={label} />

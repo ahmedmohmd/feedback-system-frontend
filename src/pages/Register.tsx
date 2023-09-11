@@ -1,6 +1,7 @@
 import styled from "@emotion/styled";
-import { useFormik } from "formik";
+import { yupResolver } from "@hookform/resolvers/yup";
 import { useRef, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
 import { AiFillEyeInvisible } from "react-icons/ai";
 import { BiShow } from "react-icons/bi";
 import { useMutation } from "react-query";
@@ -31,7 +32,7 @@ const Heading = styled.h1`
   }
 `;
 
-const signInSchema = yup.object({
+const registerSchema = yup.object({
   name: yup.string().required(),
   email: yup.string().email().required(),
   password: yup
@@ -41,41 +42,32 @@ const signInSchema = yup.object({
     .required(),
 });
 
-const initialValues = {
-  name: "",
-  email: "",
-  password: "",
-};
-
 const Register = () => {
   const [show, setShow] = useState(false);
   const [image, setImage] = useState<any>();
   const [imagePreview, setImagePreview] = useState("");
   const imageInput = useRef<any>(null);
 
-  const handleRegister = (values) => {
+  const handleRegister = (data) => {
     const formData = new FormData();
 
-    formData.append("name", values.name);
-    formData.append("email", values.email);
-    formData.append("password", values.password);
+    formData.append("name", data.name);
+    formData.append("email", data.email);
+    formData.append("password", data.password);
     formData.append("image", image);
 
     mutate(formData);
   };
 
   const {
+    register,
     handleSubmit,
-    errors,
-    values,
-    handleBlur,
-    handleChange,
-    touched,
-    setErrors,
-  } = useFormik({
-    initialValues,
-    validationSchema: signInSchema,
-    onSubmit: handleRegister,
+    formState: { errors },
+    setError,
+    control,
+  } = useForm({
+    resolver: yupResolver(registerSchema),
+    mode: "onTouched",
   });
 
   const { mutate, isLoading } = useMutation({
@@ -86,22 +78,22 @@ const Register = () => {
     onError: (error: any) => {
       if (error.message) {
         if (error.message.startsWith("Password")) {
-          setErrors({
-            password: error.message,
-          });
+          setError("password", error.message);
         } else {
-          setErrors({
-            email: error.message,
-          });
+          setError("email", error.message);
         }
       } else {
         const passRegEx = /\bpassword\b/i;
         const emailRegEx = /\bemail\b/i;
 
-        setErrors({
-          password: error.errors.find((error) => passRegEx.test(error.msg))
+        setError("password", {
+          type: "custom",
+          message: error.errors.find((error) => passRegEx.test(error.msg))?.msg,
+        });
+        setError("email", {
+          type: "custom",
+          message: error.errors.find((error) => emailRegEx.test(error.msg))
             ?.msg,
-          email: error.errors.find((error) => emailRegEx.test(error.msg))?.msg,
         });
       }
     },
@@ -117,54 +109,50 @@ const Register = () => {
         />
 
         <form
-          onSubmit={handleSubmit}
+          onSubmit={handleSubmit(handleRegister)}
           className="flex flex-col items-center justify-center flex-1 gap-4 md:gap-6 my-16"
         >
           <Heading className="text-center text-6xl mb-14 font-modak text-[#6c63ff] tracking-widest">
             Register
           </Heading>
 
-          <InputField
-            id="name"
-            name="Name"
-            label="name"
-            value={values.name}
-            errors={errors}
-            touched={touched}
-            type="text"
-            placeholder="exmaple: Ahmed Mohamed"
-            onChange={handleChange}
-            onBlur={handleBlur}
-            containerClassName="flex justify-center items-start flex-col w-full md:w-[60%]"
-            inputClassName=" bg-slate-50 text-slate-500 focus:!text-primary duration-300 focus:!border-primary border-2 placeholder:text-gray-400/50 !border-gray-200 rounded-full px-5 h-14 outline-none !ring-0 w-full"
+          <Controller
+            name="name"
+            control={control}
+            render={({ field }) => (
+              <InputField
+                {...field}
+                errors={errors}
+                title={"Name"}
+                field={"name"}
+                type={"text"}
+                to={"name"}
+              />
+            )}
           />
-
-          <InputField
-            id="email"
+          <Controller
             name="email"
-            label="Email"
-            value={values.email}
-            errors={errors}
-            touched={touched}
-            type="email"
-            placeholder="name@example.com"
-            onChange={handleChange}
-            onBlur={handleBlur}
-            containerClassName="flex justify-center items-start flex-col w-full md:w-[60%]"
-            inputClassName=" bg-slate-50 text-slate-500 focus:!text-primary duration-300 focus:!border-primary border-2 placeholder:text-gray-400/50 !border-gray-200 rounded-full px-5 h-14 outline-none !ring-0 w-full"
+            control={control}
+            render={({ field }) => (
+              <InputField
+                {...field}
+                errors={errors}
+                title={"Email"}
+                field={"email"}
+                type={"email"}
+                to={"email"}
+              />
+            )}
           />
 
           <section className="flex flex-col items-start justify-center flex-1 w-full md:w-[60%]">
-            <Label name="Password" to="password" />
+            <Label title="Password" to="password" />
             <section className="relative w-full">
               <input
                 id="password"
                 placeholder="password should be between 8 to 15 char"
-                name="password"
                 type={show ? "text" : "password"}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                value={values.password}
+                {...register("password")}
                 className=" bg-slate-50 text-slate-500 focus:!text-primary duration-300 focus:!border-primary border-2 placeholder:text-gray-400/50 !border-gray-200 rounded-full px-5 h-14 outline-none !ring-0 w-full"
               />
 
@@ -181,11 +169,12 @@ const Register = () => {
                 )}
               </span>
             </section>
+            <ErrorMessage errors={errors} field={"password"} />
           </section>
 
           <section className="flex flex-col items-start justify-center flex-1 w-full md:w-[60%]">
             <section className="relative w-full">
-              <Label name="Image" to="image" />
+              <Label title="Image" to="image" required={false} />
               <label
                 htmlFor="image"
                 className="w-1/2 h-14 mt-2 rounded-full flex justify-start pl-5 bg-slate-700/90 truncate text-white/90 hover:cursor-pointer items-center text-md "

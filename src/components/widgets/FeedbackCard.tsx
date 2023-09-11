@@ -1,11 +1,16 @@
+import { useContext } from "react";
 import { FaComment } from "react-icons/fa";
 import { MdKeyboardArrowUp } from "react-icons/md";
 import { useMutation } from "react-query";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import globalService from "../../services/globalService";
+import GlobalContext from "../../utils/globalContext";
 import queryClient from "../../utils/queryClient";
 
 const FeedbackCard = ({ feedback, isRoadmap }) => {
+  const navigate = useNavigate();
+  const context = useContext(GlobalContext);
+
   const { mutate } = useMutation({
     mutationFn: globalService.voteFeedback,
     onSuccess: () => {
@@ -70,7 +75,11 @@ const FeedbackCard = ({ feedback, isRoadmap }) => {
           <section>
             <button
               onClick={() => {
-                mutate(feedback._id);
+                if (context?.user) {
+                  mutate(feedback._id);
+                } else {
+                  navigate("/login");
+                }
               }}
               className="self-start bg-slate-200/50 stroke-4 flex justify-center items-center p-2 h-12 rounded-xl hover:bg-slate-200/90 duration-300 hover:cursor-pointer"
             >
@@ -101,7 +110,11 @@ const FeedbackCard = ({ feedback, isRoadmap }) => {
     >
       <button
         onClick={() => {
-          mutate(feedback._id);
+          if (context?.user) {
+            mutate(feedback._id);
+          } else {
+            navigate("/login");
+          }
         }}
         className="self-start hidden bg-slate-200/50 flex-col stroke-4 md:flex justify-center items-center p-2 w-12 rounded-xl hover:bg-slate-200/90 duration-300 hover:cursor-pointer"
       >

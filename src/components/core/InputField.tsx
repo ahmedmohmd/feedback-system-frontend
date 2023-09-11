@@ -15,25 +15,16 @@ interface Props {
   others: { [key: string]: string };
 }
 
-const InputField = ({
-  name,
-  label,
-  errors,
-  touched,
-  type,
-  containerClassName = "",
-  inputClassName = "bg-[#f8fafc]",
-  ...others
-}) => {
+const InputField = ({ title, to, type, errors, field, ...others }) => {
   return (
-    <section className={containerClassName}>
-      <Label to={name} name={label} />
+    <section className="flex justify-center items-start flex-col w-full md:w-[60%]">
+      <Label title={title} to={to} />
       <input
         type={type}
-        className={inputClassName + " placeholder:font-normal mt-2"}
         {...others}
+        className="bg-slate-50 text-slate-500 focus:!text-primary duration-300 focus:!border-primary border-2 placeholder:text-gray-400/50 !border-gray-200 rounded-full px-5 h-14 outline-none !ring-0 w-full placeholder:font-normal mt-2"
       />
-      <ErrorMessage errors={errors[name]} touched={touched[name]} />
+      <ErrorMessage errors={errors} field={field} />
     </section>
   );
 };
