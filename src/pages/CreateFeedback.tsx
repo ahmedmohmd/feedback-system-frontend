@@ -1,3 +1,4 @@
+import { yupResolver } from "@hookform/resolvers/yup";
 import { Modal } from "flowbite-react";
 import { useFormik } from "formik";
 import { useId, useState } from "react";
@@ -12,6 +13,9 @@ import SelectField from "../components/core/SelectField";
 import TextareaField from "../components/core/TextareaField";
 import feedbackService from "../services/feedbackService";
 import queryClient from "../utils/queryClient";
+
+import { Controller, useForm } from "react-hook-form";
+import ErrorMessage from "../components/atoms/ErrorMessage";
 
 const feedbackSchema = yup.object({
   title: yup.string().required(),
@@ -58,40 +62,43 @@ const CreateFeedback = () => {
     },
   });
 
-  const handleCreate = (values) => {
-    mutate(values);
+  const handleCreate = (data) => {
+    mutate(data);
   };
+
   const {
-    setFieldValue,
+    register,
     handleSubmit,
-    errors,
-    values,
-    handleBlur,
-    handleChange,
-    touched,
-  } = useFormik({
-    initialValues,
-    validationSchema: feedbackSchema,
-    onSubmit: handleCreate,
+    formState: { errors },
+    setError,
+    control,
+    setValue,
+    getValues,
+  } = useForm({
+    resolver: yupResolver(feedbackSchema),
+    mode: "onTouched",
+    defaultValues: initialValues,
   });
 
-  const handleTagClick = (category) => {
+  const handleTagClick = (category: string) => {
     let ceto: any = document.getElementById(category);
 
-    if (values.categories.includes(category)) {
+    if (getValues("categories")?.includes(category)) {
       ceto.style.backgroundColor = "rgb(63 131 248 / 0.9)";
 
-      return setFieldValue("categories", [
-        ...[...values.categories, category].filter((value) => {
+      return setValue("categories", [
+        ...[...getValues("categories"), category].filter((value) => {
           return value !== category;
         }),
       ]);
     } else {
       ceto.style.backgroundColor = "#34d399";
-      return setFieldValue("categories", [
-        ...[...values.categories, category].filter((value, index, self) => {
-          return self.indexOf(value) === index;
-        }),
+      return setValue("categories", [
+        ...[...getValues("categories"), category].filter(
+          (value, index, self) => {
+            return self.indexOf(value) === index;
+          }
+        ),
       ]);
     }
   };
@@ -110,50 +117,51 @@ const CreateFeedback = () => {
 
       <article className="flex justify-center items-center rounded-2xl text-slate-600 p-4 mt-4 w-full h-full md:w-1/2 mx-auto">
         <form
-          onSubmit={handleSubmit}
+          onSubmit={handleSubmit(handleCreate)}
           className="flex flex-col mb-16 items-center justify-center w-full gap-5 font-medium text-slate-500"
         >
-          <InputField
-            id="title"
+          <Controller
             name="title"
-            label="Title"
-            value={values.title}
-            errors={errors}
-            touched={touched}
-            type="text"
-            placeholder="Enter Your Feedback's Title..."
-            onChange={handleChange}
-            onBlur={handleBlur}
-            containerClassName="w-full"
-            inputClassName="focus:!text-primary truncate bg-[#f8fafc] duration-300 focus:!border-primary border-2 placeholder:text-gray-400/50 !border-gray-200 rounded-full px-5 h-14 outline-none !ring-0 w-full"
+            control={control}
+            render={({ field }) => (
+              <InputField
+                {...field}
+                errors={errors}
+                title={"Title"}
+                field={"title"}
+                type={"text"}
+                to={"title"}
+                w="w-full"
+              />
+            )}
           />
 
-          <TextareaField
-            errors={errors}
-            label="Description"
-            placeholder="Enter Your Feedback's Description..."
-            id="description"
-            touched={touched}
-            name="description"
-            onChange={handleChange}
-            onBlur={handleBlur}
-            value={values.description}
-            containerClassName="w-full"
-            textareaClassName="focus:!text-primary bg-[#f8fafc] !h-[12rem] duration-300 focus:!border-primary resize-none p-5 border-2 placeholder:text-gray-400/50 !border-gray-200 rounded-3xl outline-none !ring-0 w-full"
-          />
+          <section className="flex flex-col items-start justify-center flex-1 w-full">
+            <Label title="Description" to="description" />
+            <textarea
+              id="description"
+              {...register("description")}
+              className="focus:!text-primary bg-[#f8fafc] !h-[12rem] duration-300 focus:!border-primary resize-none p-5 border-2 placeholder:text-gray-400/50 !border-gray-200 rounded-3xl outline-none !ring-0 w-full"
+            ></textarea>
+            <ErrorMessage errors={errors} field={"description"} />
+          </section>
 
-          <SelectField
-            label="Roadmap"
-            onChange={handleChange}
+          <Controller
             name="roadmap"
-            id="roadmap"
-            value={values.roadmap}
-            className="focus:!border-primary bg-[#f8fafc] focus:!text-primary duration-300 hover:cursor-pointer rounded-3xl border-2 outline-none !ring-0 !border-gray-200 "
-            options={roadmapOptions}
+            control={control}
+            render={({ field }) => (
+              <SelectField
+                {...field}
+                options={roadmapOptions}
+                label="roadmap"
+                name={"roadmap"}
+                className="focus:!border-primary bg-[#f8fafc] focus:!text-primary duration-300 hover:cursor-pointer rounded-3xl border-2 outline-none !ring-0 !border-gray-200 "
+              />
+            )}
           />
 
           <section className="flex flex-col items-start self-start justify-center">
-            <Label name="Tags" to="tags" />
+            <Label title="Tags" to="tags" />
             <section
               id="tags"
               className="flex flex-wrap items-center self-start justify-start gap-4"

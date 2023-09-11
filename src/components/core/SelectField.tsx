@@ -4,7 +4,7 @@ import Label from "../atoms/Label";
 const SelectField = ({ name, label, options, ...others }) => {
   return (
     <section className="flex justify-center items-start  flex-col w-full">
-      <Label name={name} to={label} />
+      <Label title={name} to={label} />
       <select
         // defaultValue={options.find((option) => option.selected.toString())}
         name="roadmap"

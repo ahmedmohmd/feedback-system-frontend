@@ -12,7 +12,7 @@ const postComment = ({ commentData, feedbackId }) => {
 };
 const deleteComment = ({ commentId, feedbackId }) => {
   return httpService.delete(
-    `${config.baseUrl}/feedbacks/comments/${feedbackId}/${commentId}`
+    `${config.baseUrl}/feedbacks/${feedbackId}/comments/${commentId}`
   );
 };
 

@@ -4,20 +4,27 @@ import ErrorMessage from "../atoms/ErrorMessage";
 import Label from "../atoms/Label";
 
 interface Props {
-  name: string;
-  label: string;
-  errors: any;
-  touched: any;
+  title: string;
+  to: string;
   type: string;
-  containerClassName: string;
+  errors: any;
+  field: string;
   inputClassName: string;
-  children?: any;
-  others: { [key: string]: string };
+  styles?: string;
+  others: any;
 }
 
-const InputField = ({ title, to, type, errors, field, ...others }) => {
+const InputField = ({
+  title,
+  to,
+  type,
+  errors,
+  field,
+  w = "md:w-[60%]",
+  ...others
+}) => {
   return (
-    <section className="flex justify-center items-start flex-col w-full md:w-[60%]">
+    <section className={"flex justify-center items-start flex-col w-full " + w}>
       <Label title={title} to={to} />
       <input
         type={type}
