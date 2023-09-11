@@ -36,10 +36,10 @@ const RodmapLinks = styled.div`
 `;
 
 const Roadmap = () => {
-  const [show, setShow] = useState(false);
+  // const [show, setShow] = useState(false);
   const {
     feedbacks: { data },
-  } = useContext(GlobalContext);
+  }: any = useContext(GlobalContext);
 
   const navigate = useNavigate();
 
@@ -66,21 +66,19 @@ const Roadmap = () => {
               color="white"
               className="text-2xl md:text-4xl font-bold"
             />
-            <span className="md:text-2xl font-bold">6 Suggestions</span>
+            <span className="md:text-2xl font-bold">
+              {data.length} Suggestions
+            </span>
           </section>
         </section>
 
         <button
-          onClick={() => setShow(true)}
+          onClick={() => navigate("/create-feedback")}
           className="group duration-300 flex justify-center items-center gap-2 p-1 py-4 md:py-4 md:px-4  h-14 w-14 md:w-auto rounded-full bg-primary md:hover:bg-purple-600 md:rounded-2xl font-bold"
         >
           <GoPlus className="md:group-hover:rotate-0 group-hover:rotate-180 duration-300 md:group-hover:scale-[1] group-hover:scale-[1.3] font-bold text-2xl md:text-xl " />
           <span className="flex-1 hidden text-sm md:block">Add Feedback</span>
         </button>
-
-        <Modal show={show} onClose={() => setShow(false)}>
-          <CreateFeedback />
-        </Modal>
       </article>
 
       <RodmapLinks className="w-full md:hidden bg-white mt-3 p-3 rounded-3xl flex justify-between items-center gap-3">
