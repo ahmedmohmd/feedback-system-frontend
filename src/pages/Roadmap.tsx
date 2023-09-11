@@ -36,7 +36,6 @@ const RodmapLinks = styled.div`
 `;
 
 const Roadmap = () => {
-  // const [show, setShow] = useState(false);
   const {
     feedbacks: { data },
   }: any = useContext(GlobalContext);
