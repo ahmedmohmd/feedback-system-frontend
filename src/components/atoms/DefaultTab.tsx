@@ -1,8 +1,10 @@
+import { yupResolver } from "@hookform/resolvers/yup";
 import axios from "axios";
 import { Modal } from "flowbite-react";
 import { useFormik } from "formik";
 import Lottie from "lottie-react";
 import { useContext, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
 import { BsFillImageFill } from "react-icons/bs";
 import { CiImageOn } from "react-icons/ci";
 import { useMutation } from "react-query";
@@ -23,7 +25,18 @@ const Default = () => {
   const [show, setShow] = useState(false);
   const [imageUpdated, setImageUpdated] = useState<boolean>(false);
   const [nameUpdated, setNameUpdated] = useState<boolean>(false);
-  const { user } = useContext(GlobalContext);
+  const { user }: any = useContext(GlobalContext);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    setError,
+    control,
+  } = useForm({
+    resolver: yupResolver(updateNameSchema),
+    mode: "onTouched",
+  });
 
   let initialValues = {
     name: user?.name,
@@ -81,12 +94,12 @@ const Default = () => {
     });
   };
 
-  const { values, errors, handleBlur, handleChange, touched, handleSubmit } =
-    useFormik({
-      initialValues,
-      validationSchema: updateNameSchema,
-      onSubmit: handleUpdateName,
-    });
+  // const { values, errors, handleBlur, handleChange, touched, handleSubmit } =
+  //   useFormik({
+  //     initialValues,
+  //     validationSchema: updateNameSchema,
+  //     onSubmit: handleUpdateName,
+  //   });
 
   return (
     <div className="flex-1 p-4">
@@ -216,24 +229,26 @@ const Default = () => {
       </Modal>
 
       <form
-        onSubmit={handleSubmit}
+        onSubmit={handleSubmit(handleUpdateName)}
         className="md:w-[75%] lg:w-[50%] xl:w-[30%] w-full top-8 relative flex justify-center items-center flex-col gap-3 left-1/2 -translate-x-1/2"
       >
         <section className="w-full relative">
-          <InputField
-            id="name"
+          <Controller
             name="name"
-            label="Full Name"
-            value={values.name}
-            errors={errors}
-            touched={touched}
-            type="text"
-            placeholder="exmaple: Ahmed Mohamed"
-            onChange={handleChange}
-            onBlur={handleBlur}
-            containerClassName="flex w-full  self-center justify-center items-start flex-col w-full"
-            inputClassName="font-medium bg-slate-50 text-slate-500 focus:!text-primary duration-300 focus:!border-primary border-2 placeholder:text-gray-400/50 !border-gray-200 rounded-full px-5 h-14 outline-none !ring-0 w-full"
+            control={control}
+            render={({ field }) => (
+              <InputField
+                {...field}
+                errors={errors}
+                title={"Name"}
+                field={"name"}
+                type={"text"}
+                to={"name"}
+                w="w-full"
+              />
+            )}
           />
+
           {nameUpdated ? (
             <Lottie
               className="w-20 absolute md:-right-[17%] -right-[10px] -bottom-[12%] z-50 text-3xl"
