@@ -123,10 +123,11 @@ const Register = () => {
               <InputField
                 {...field}
                 errors={errors}
-                title={"Name"}
-                field={"name"}
-                type={"text"}
-                to={"name"}
+                title="Name"
+                field="name"
+                type="text"
+                to="name"
+                placeholder="example: Ahmed Muhammad"
               />
             )}
           />
@@ -137,10 +138,11 @@ const Register = () => {
               <InputField
                 {...field}
                 errors={errors}
-                title={"Email"}
-                field={"email"}
-                type={"email"}
-                to={"email"}
+                title="Email"
+                field="email"
+                type="email"
+                to="email"
+                placeholder="name@example.com"
               />
             )}
           />

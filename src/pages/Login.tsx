@@ -60,20 +60,6 @@ const Login = () => {
     });
   };
 
-  // const {
-  //   handleSubmit,
-  //   errors,
-  //   values,
-  //   handleBlur,
-  //   handleChange,
-  //   touched,
-  //   setErrors,
-  // } = useFormik({
-  //   initialValues,
-  //   validationSchema: signInSchema,
-  //   onSubmit: handleSignIn,
-  // });
-
   const {
     register,
     handleSubmit,
@@ -136,10 +122,11 @@ const Login = () => {
               <InputField
                 {...field}
                 errors={errors}
-                title={"Email"}
-                field={"email"}
-                type={"email"}
-                to={"email"}
+                title="Email"
+                field="email"
+                type="email"
+                to="email"
+                placeholder="name@example.com..."
               />
             )}
           />

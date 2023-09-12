@@ -1,6 +1,8 @@
 import styled from "@emotion/styled";
+import { yupResolver } from "@hookform/resolvers/yup";
 import { useFormik } from "formik";
 import { useState } from "react";
+import { Controller, useForm } from "react-hook-form";
 import { useMutation } from "react-query";
 import swal from "sweetalert";
 import * as yup from "yup";
@@ -45,30 +47,31 @@ const ResetRequest = () => {
   };
 
   const {
+    register,
     handleSubmit,
-    errors,
-    values,
-    handleBlur,
-    handleChange,
-    touched,
-    setErrors,
-  } = useFormik({
-    initialValues,
-    validationSchema: resetRequestSchema,
-    onSubmit: handleResetRequest,
+    formState: { errors },
+    setError,
+    control,
+  } = useForm({
+    resolver: yupResolver(resetRequestSchema),
+    mode: "onTouched",
   });
 
   const { mutate, isLoading } = useMutation({
     mutationFn: authService.resetRequest,
     onError: (error: any) => {
       if (error.message) {
-        setErrors({
-          email: error.message,
+        setError("email", {
+          type: "custom",
+          message: error.message,
         });
       } else {
         const emailRegEx = /\bemail\b/i;
-        setErrors({
-          email: error.errors.find((error) => emailRegEx.test(error.msg))?.msg,
+
+        setError("email", {
+          type: "custom",
+          message: error.errors.find((error) => emailRegEx.test(error.msg))
+            ?.msg,
         });
       }
     },
@@ -87,25 +90,28 @@ const ResetRequest = () => {
   return (
     <div className="w-full flex justify-center items-center min-h-[calc(100vh-80px)] px-4">
       <form
-        onSubmit={handleSubmit}
+        onSubmit={handleSubmit(handleResetRequest)}
         className="flex flex-1 justify-center items-center flex-col"
       >
         <Heading className="text-center text-3xl sm:text-4xl md:text-5xl mb-28 md:mb-26 font-modak text-[#6c63ff] tracking-widest">
           Password Reset
         </Heading>
-        <InputField
-          id="email"
+
+        <Controller
           name="email"
-          label="Email"
-          value={values.email}
-          errors={errors}
-          touched={touched}
-          type="email"
-          placeholder="name@example.com"
-          onChange={handleChange}
-          onBlur={handleBlur}
-          containerClassName="flex justify-center items-start flex-col w-full lg:w-[30%] md:w-[50%]"
-          inputClassName="font-medium bg-slate-50 text-slate-500 focus:!text-primary duration-300 focus:!border-primary border-2 placeholder:text-gray-400/50 !border-gray-200 rounded-full px-5 h-14 outline-none  !ring-0 w-full"
+          control={control}
+          render={({ field }) => (
+            <InputField
+              {...field}
+              errors={errors}
+              title="Email"
+              field="email"
+              type="email"
+              to="email"
+              placeholder="name@example.com"
+              w="sm:w-[75%] md:w-[60%] lg:w-[50%] xl:w-[30%]"
+            />
+          )}
         />
 
         <button
